@@ -25,7 +25,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 1\. Completed!
 
-2\. 
+2\. See this [Git repository](https://github.com/ericktang/FDS_homework4).
 
 \subsection*{Tidyverse}
 
