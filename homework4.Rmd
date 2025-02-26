@@ -1,0 +1,193 @@
+---
+title: "Homework 4"
+author: "Eric Tang"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(dslabs)
+library(dplyr)
+library(NHANES)
+library(purrr)
+data(murders)
+data(NHANES)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\subsection*{Data Structures}
+
+1\. In R, the `scan()` function is used to read (typically numeric) data into vectors, whereas `readLines()` reads entire lines from text files into a character vector. `read_html` loads data from HTML files into an XML document and can used for web scraping. Finally, `readxl` reads Excel files into a tibble without the use of Java like `read.xlsx` requires.
+
+2\. The S3 class in R is the simplest and most commonly used object-oriented programming system. This class uses generic functions and method dispatch and is thus simple and lightweight. The S4 class is stricter and requires formal class definitions with strict validation. The R6 classes provides mutable objects, whereas the previous classes are based on copy-on-modify. R6 is used with performance-sensitive applications, such as Shiny or APIs. 
+
+\subsection*{Data Structures}
+
+1\. Completed!
+
+2\. 
+
+\subsection*{Tidyverse}
+
+1\. d. `co2` is not tidy: to be tidy we would have to wrangle it to have three columns (year, month and value),
+ then each co2 observation would have a row.
+ 
+2\. b. `ChickWeight` is tidy: each observation (a weight) is represented by one row. The chick from which this measurement came is one of the variables.
+ 
+3\. c. `BOD` is tidy: each row is an observation with two values (time and demand)
+
+4\. `DNase`, `Formaldehyde`, and `Orange` are tidy.
+
+5\.
+```{r}
+murders <- mutate(murders, rate = total / (population / 10^5))
+```
+
+6\.
+```{r}
+murders <- mutate(murders, rank = rank(-rate))
+```
+
+7\. 
+```{r}
+select(murders, state, abb) %>% head()
+```
+
+8\. 
+```{r}
+filter(murders, rank <= 5)
+```
+
+9\.
+```{r}
+no_south <- filter(murders, region != "South")
+nrow(no_south)
+```
+
+10\.
+```{r}
+murders_nw <- filter(murders, region %in% c("Northeast", "West"))
+nrow(murders_nw)
+```
+
+11\.
+```{r}
+my_states <- filter(murders, region %in% c("Northeast", "West") & rate < 1)
+select(my_states, state, rate, rank)
+```
+
+12\.
+```{r}
+filter(murders, region %in% c("Northeast", "West") & rate < 1) %>%
+  select(state, rate, rank)
+```
+
+13\.
+```{r}
+data(murders)
+my_states <- murders %>%
+  mutate(rate = total / (population / 10^5)) %>%
+  mutate(rank = rank(-rate)) %>%
+  filter(region %in% c("Northeast", "West") & rate < 1) %>%
+  select(state, rate, rank)
+print(my_states)
+```
+
+
+14\. 
+```{r}
+ref <- filter(NHANES, AgeDecade == " 20-29" & Gender == "female") %>%
+  summarize(
+    avg = mean(BPSysAve, na.rm = T),
+    std = sd(BPSysAve, na.rm = T))
+print(ref)
+```
+
+15\. 
+```{r}
+ref_avg <- filter(NHANES, AgeDecade == " 20-29" & Gender == "female") %>%
+  summarize(
+    avg = mean(BPSysAve, na.rm = T)) %>%
+  pull(avg)
+```
+
+16\.
+```{r}
+filter(NHANES, AgeDecade == " 20-29" & Gender == "female") %>%
+  summarize(
+    min = min(BPSysAve, na.rm = T),
+    max = max(BPSysAve, na.rm = T)) %>%
+  pull(min, max)
+```
+
+17\.
+```{r}
+female_avg <- filter(NHANES, Gender == "female") %>%
+  group_by(AgeDecade) %>%
+  summarize(
+    avg = mean(BPSysAve, na.rm = T),
+    std = sd(BPSysAve, na.rm = T))
+```
+
+18\.
+```{r}
+male_avg <- filter(NHANES, Gender == "male") %>%
+  group_by(AgeDecade) %>%
+  summarize(
+    avg = mean(BPSysAve, na.rm = T),
+    std = sd(BPSysAve, na.rm = T))
+```
+
+19\.
+```{r}
+combined_avg <- group_by(NHANES, AgeDecade, Gender) %>%
+  summarize(
+    avg = mean(BPSysAve, na.rm = T),
+    std = sd(BPSysAve, na.rm = T))
+```
+
+20\.
+```{r}
+filter(NHANES, Gender == "male" & AgeDecade == " 40-49") %>%
+  group_by(Race1) %>%
+  summarize(
+    avg = mean(BPSysAve, na.rm = T)) %>%
+  arrange(avg)
+```
+
+21\. b. murders is in tidy format and is stored in a data frame.
+
+22\. 
+```{r}
+murders_tibble <- as_tibble(murders)
+class(murders_tibble)
+```
+
+23\. 
+```{r}
+murders_tibble <- murders %>%
+  as_tibble() %>%
+  group_by(region)
+```
+
+24\. 
+```{r}
+murders %>%
+  .$population %>%
+  log() %>%
+  mean() %>%
+  exp()
+```
+
+25\.
+```{r}
+df <- map_df(1:100, function(n) {
+  data.frame(
+    n = n,
+    s_n = sum(1:n),
+    s_n_2 = sum(1:n)
+  )
+})
+```
+
+
