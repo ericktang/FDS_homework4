@@ -191,3 +191,8 @@ df <- map_df(1:100, function(n) {
 ```
 
 
+\subsection*{R Packages and Shiny}
+
+1\. First, the app is initialized, but no content has been added. The addition of `titlePanel("k-means clustering"),` adds a title to the page. UI inputs are added with the `selectInput()` functions, which allow the user to choose values to plot on the X and Y axes. A plot is generated in the main panel with `mainPanel()` and `output$plot1`. Adding k-means clusters the data into multiple groups, from which the centers can be calculated. The final app fully colors data points and groups them into clusters depending on the user input. 
+
+2\. See https://github.com/ericktang/FDS_homework4/tree/main/kmeans
